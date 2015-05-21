@@ -1,7 +1,7 @@
 # Yobot-pull-from-Temper1-push-to-Phant
 
 ## Statement
-Connect a Raspberry Pi to the {{wifi-name}} WiFi with password of {{wifi-password}} and then pull temperature data form a USB Temper1 termperature sensor every {{number}} seconds and push it to a Phant stream where the URL is {{URL}} , the field name is {{field_name}} the Public Key is {{public_key}} , and the Private Key is {{private_key}}. 
+Connect a Raspberry Pi to the {{wifi-name}} WiFi with password of {{wifi-password}} and then pull temperature data form a USB Temper1 termperature sensor every {{number}} seconds and push it to a Phant stream where the URL is {{phant-url}} , the field name is {{phant-field-name}} the Public Key is {{phant-public-key}} , and the Private Key is {{phant-private-key}}. 
 
 ## Install instructions
 
