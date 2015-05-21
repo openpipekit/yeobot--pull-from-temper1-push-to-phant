@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+
+var http = require('http') 
+var options = parseArgv(process.argv)
+
+
+
+if (options.hasOwnProperty('help')) {
+  help()
+}
+else if (options.data) {
+  go()
+}
+else {
+  options.data = ''
+  process.stdin.on('data', function(chunk) {
+    if (chunk)
+      options.data += chunk
+  })
+  process.stdin.on('end', function() {
+    go()
+  })
+}
+
+function go() {
+  var path = '/input/' + options.public_key + 
+    '?private_key=' + options.private_key + 
+    '&' + options.field_name + '=' + options.data;
+  log(path)
+  http.get({ host: options.url, path: path}, function(response) {
+    response.on('error', function() {
+      console.log('error!')
+      process.exit(1)
+    })
+    response.on('data', function() {
+      console.log(response.statusCode) // 200 
+      process.exit(0)
+    })
+  })
+}
+
+function help() {
+  console.log('./push')
+  console.log('  --url <url> Example: data.sparkfun.com')
+  console.log('  --public_key <public_key> Example: RM1nQNbVRGtaMMgvVz8Y')
+  console.log('  --private_key <private_key> Example: lz6d0j7KxPH1VVryqMw5')
+  console.log('  --field_name <field_name> Example: temp')
+  console.log('  --data [data] This is optional because you can also pipe data to this command.')
+  console.log('')
+}
+// This is the standard function for parsing process.argv. It will return
+// an object that where `--argumentName` is a property name and the
+// proceding argument is the value. If there is no proceeding value then
+// it will be interpreted as a boolean true.
+function parseArgv(argv) {
+  params = {}
+  argv.forEach(function(arg, i) {
+    if (arg.substr(0, 2) == '--') {
+      paramName = arg.substr(2, arg.length)
+      nextArg = argv[i+1]
+      if (typeof nextArg == 'string' && nextArg.substr(0, 2) == '--') {
+        params[paramName] = true
+      }
+      else {
+        params[paramName] = nextArg
+      }
+    }
+  })
+  return params
+}
+
+// A log function that will only log if the --verbose flag is set
+function log(msg) {
+  if (params.hasOwnProperty('verbose')) {
+    console.log(msg)
+  }
+}

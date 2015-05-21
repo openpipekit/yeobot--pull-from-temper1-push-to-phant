@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+
+var exec = require('child_process').exec;
+var program = require('commander');
+var log = function(msg) {
+  if (program.verbose) {
+    console.log(msg)
+  }
+}
+console.log('temper1')
+program
+  .option('-p, --path <path>', 'Set a path to the temper1 device. Detect the path by running the detect command.', '')
+  .option('-i, --id <fieldName>', 'Name of this field in data')
+  .option('-n, --interval [intervalBetweenChecking]', 'How long before trying the `pull` command again. If you are on a slow system you may need to increase this.', 3000)
+  .option('-t, --sensitivity [sensitivity]', '', 1)
+  .option('-s, --scale [scale]', 'Say farenheit if you dont want celsius.', 'celsius')
+  .option('-v, --verbose', 'Turn on verbose mode')
+  .option('--csv', 'Send output as CSV')
+  .parse(process.argv);
+
+var pull = function() {
+  var cmd = __dirname + '/pull'
+  cmd += ' --path ' + program.path
+  cmd += ' --scale ' + program.scale
+  if (program.verbose) cmd += ' --verbose'
+  log('pulling using the following command: \n' + cmd)
+  var child = exec(cmd, function(err, stdout, stderr) {
+    if (stdout) {
+      child.kill('SIGKILL')
+      emit(stdout)
+    }
+  })
+  // Kill this process if we're about to hit interval
+  setTimeout(function() {
+    child.kill('SIGKILL')
+  }, program.interval-100)
+}
+
+setInterval(pull, program.interval)
+pull()
+
+var lastValue = 9999
+var emit = function(value) {
+  log('checking value: ' + value)
+  value = parseFloat(value)
+  if (value > (lastValue + program.sensitivity) || value < (lastValue - program.sensitivity)) {
+    lastValue = value
+    var output = (!program.csv) ? formatAsJson(value) : formatAsCsv(value)
+    process.stdout.write(output + '\n')
+  }
+}
+
+var formatAsJson = function(value) {
+  var doc = {
+    id: program.id,
+    value: value
+  }
+  return JSON.stringify(doc)
+}
+
+var formatAsCsv = function(value) {
+
+}

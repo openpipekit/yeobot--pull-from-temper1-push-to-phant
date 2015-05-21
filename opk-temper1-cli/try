@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+var temper1x = require("temper1x")
+var program = require('commander')
+var log = function(msg) {
+  if (program.verbose) {
+    console.log(msg)
+  }
+}
+
+var devices = temper1x.getDevices()
+program
+  .option('-p, --path <path>', 'Set a path to the temper1 device. Detect the path by running the detect command.', '')
+  .option('-s, --scale [scale]', 'Say farenheit if you dont want celsius.', 'celsius')
+  .option('-v, --verbose', 'Turn on verbose mode')
+  .parse(process.argv)
+
+temper1x.readTemperature(program.path, function(err, value) {
+  if (err) {
+    log(err)
+    process.exit(1)
+  }
+  if (program.scale === 'farenheit') {
+    value = (value * (9/5)) + 32
+  }
+  console.log(value)
+  process.exit(0)
+})

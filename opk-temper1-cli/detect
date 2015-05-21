@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+var thermometers=require("temper1x");
+var devices = thermometers.getDevices();
+console.log("Found temper1 at path:")
+devices.forEach(function(device) { 
+  console.log(device)
+})

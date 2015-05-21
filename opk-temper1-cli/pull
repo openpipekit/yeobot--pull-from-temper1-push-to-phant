@@ -1,0 +1,106 @@
+#!/usr/bin/env node
+
+// Parse the arguments from the command as parameters for the pull function.
+var params = parseArgv(process.argv)
+
+// Log to the screen. Will only log if --verbose flag is added to the command.
+log(params)
+
+if (params.hasOwnProperty('help')) {
+  var thermometers=require("temper1x");
+  var devices = thermometers.getDevices();
+  console.log('./pull')
+  console.log('  --path [path] The system path to the device. This can change over time so leave blank for the command to use the first device detected.')
+  devices.forEach(function(device) {
+    console.log('      ' + device)
+  })
+  console.log('  --timeout [timeout] How long before trying the `try` command again. If you are on a slow system you may need to increase this.')
+  console.log('  --scale [scale] Choose which scale you would like to use. Default is celsius.')
+  console.log('    celsius')
+  console.log('    farenheit')
+  console.log('  --verbose', 'Turn on verbose mode')
+}
+else {
+  // For arguments not set, apply defaults.
+  if (!params.hasOwnProperty('timeout')) params.timeout = 3000
+  if (!params.hasOwnProperty('scale')) params.scale = 'celsius'
+  // Run the pull command!
+  pull(params)
+}
+
+/*
+ * Functions
+ */
+
+// This pull command features timeout. That means it will run a try command
+// that if it does not hear back from, it will kill the child process and
+// run it again. That darn temper1 sensor is finicky, sometimes returning
+// a value in 200 milliseconds, sometimes never.
+function pull(params) {
+  var exec = require('child_process').exec;
+  log('trying...')
+  function go() {
+    var cmd =
+      __dirname +
+      '/try' +
+        ' --path ' + params.path +
+        ' --scale ' + params.scale
+    if (params.verbose) cmd += ' --verbose'
+    log(cmd)
+    var child = exec(cmd, function(err, stdout, stderr) {
+      if (stdout) {
+        var value = stdout.replace(/[\n\r]+/g, '')
+        if (params.hasOwnProperty('json')) {
+          process.stdout.write('{"' + params.json + '":' + value + '}')
+        }
+        else {
+          process.stdout.write(value)
+        }
+        process.exit(0)
+      }
+    })
+    setTimeout(function() {
+      child.kill('SIGKILL')
+      pull(params)
+    }, params.timeout)
+  }
+  if(params.hasOwnProperty('path')) {
+    go()
+  }
+  else {
+    var thermometers=require("temper1x");
+    var devices = thermometers.getDevices();
+    devices.forEach(function(device) {
+      params.path = device
+    })
+    go()
+  }
+}
+
+// This is the standard function for parsing process.argv. It will return
+// an object that where `--argumentName` is a property name and the
+// proceding argument is the value. If there is no proceeding value then
+// it will be interpreted as a boolean true.
+function parseArgv(argv) {
+  params = {}
+  argv.forEach(function(arg, i) {
+    if (arg.substr(0, 2) == '--') {
+      paramName = arg.substr(2, arg.length)
+      nextArg = argv[i+1]
+      if (typeof nextArg == 'string' && nextArg.substr(0, 2) == '--') {
+        params[paramName] = true
+      }
+      else {
+        params[paramName] = nextArg
+      }
+    }
+  })
+  return params
+}
+
+// A log function that will only log if the --verbose flag is set
+function log(msg) {
+  if (params.hasOwnProperty('verbose')) {
+    console.log(msg)
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "opk-temper1",
+  "version": "0.3.1",
+  "description": "Open Pipe Kit driver for temper1",
+  "main": "pull",
+  "dependencies": {
+    "temper1x": "0.0.1",
+    "commander": "2.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "pull"
+  },
+  "engine": "node 0.10.x",
+  "author": "R.J. Steinert",
+  "license": "ISC"
+}
