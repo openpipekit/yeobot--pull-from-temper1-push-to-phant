@@ -11,7 +11,7 @@ Pull temperature data form a USB Temper1 termperature sensor every {{number}} se
 4. With the Phant details in hand and a USB Memory stick, generate this script onto the USB Memory stick using Yeobot and fill out the prompts with your Wifi info and the details that you received from Phant.
 ```
 cd /Volumes/my-usb-drive
-yeobot git@github.com:rjsteinert/Yobot-pull-from-Temper1-push-to-Phant.git 
+yeobot --repository git@github.com:rjsteinert/Yobot-pull-from-Temper1-push-to-Phant.git 
 ```
 5. Plug everything together and connect your Raspberry Pi to a power supply. 
 6. Wait 15 minutes, check your Phant stream to verify data is being added to the stream.
