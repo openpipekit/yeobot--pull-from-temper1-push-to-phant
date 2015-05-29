@@ -11,7 +11,7 @@ Step 2 - Burn the [Pirateship disk image](http://pirate.sh) to your SD Card.
 
 Step 3 - Create a Phant stream to store data in. You can use http://data.sparkfun.com for a free 50mb of data for each stream you create. For a field in your Phant stream fill out `temperature` as we have just one field for this script. Make sure to save the public key, private key, and field name that Phant gives you.
 
-Step 4 - With the Phant details in hand and a USB Memory stick, generate this script onto the USB Memory stick using Yeobot and fill out the prompts with your Wifi info and the details that you received from Phant.
+Step 4 - With the Phant details in hand and a USB Memory stick, generate this script onto the USB Memory stick using Yeobot and fill out the prompts with your Wifi info and the details that you received from Phant. Make sure you have [Yeobot installed](https://github.com/openpipekit/yeobot-cli/tree/master#install).
 ```
 cd /Volumes/my-usb-drive
 yeobot --repository https://github.com/rjsteinert/Yeobot-pull-from-Temper1-push-to-Phant.git
