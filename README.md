@@ -3,7 +3,7 @@
 ## Statement
 From a Raspberry Pi, pull temperature data from a USB Temper1 termperature sensor every {{number}} seconds and push it to a Phant stream where the URL is {{phant-url}} , the field name is {{phant-field-name}} the Public Key is {{phant-public-key}} , and the Private Key is {{phant-private-key}}. 
 
-## Install instructions
+## How to use this Recipe
 
 Step 1 - Gather the hardware together for this script: Temper1 temperature sensor; Raspberry Pi computer; SD Card.
 
